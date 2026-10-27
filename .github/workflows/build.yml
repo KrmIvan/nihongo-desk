@@ -20,6 +20,13 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
       - run: sudo apt-get update && sudo apt-get install -y libxcb-cursor0 libegl1 libxkbcommon0 libgl1
+      - name: La etiqueta coincide con __version__
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          V=$(python -c "import nihongo_desk; print(nihongo_desk.__version__)")
+          if [ "v$V" != "${GITHUB_REF_NAME}" ]; then
+            echo "::error::La etiqueta ${GITHUB_REF_NAME} no coincide con __version__ = $V (cámbialo en nihongo_desk/__init__.py)"; exit 1
+          fi
       - run: pip install -r requirements.txt
       - run: QT_QPA_PLATFORM=offscreen python -m pytest -q
 
