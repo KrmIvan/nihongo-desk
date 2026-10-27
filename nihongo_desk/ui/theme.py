@@ -83,6 +83,7 @@ QToolTip {{ background: {p['surface2']}; color: {p['text']}; border: 1px solid {
 /* ---------- barra de título ---------- */
 #TitleBar {{ background: {p['bg']}; border-bottom: 1px solid {p['border']}; }}
 #Logo {{ background: {p['accent']}; color: white; border-radius: 5px; font-family: '{jp}'; font-size: 14px; font-weight: 700; }}
+#MascotStrip {{ background: {p['surface']}; border-bottom: 1px solid {p['border']}; }}
 #AppName {{ font-weight: 600; font-size: 13px; color: {p['text']}; }}
 QToolButton#TitleBtn {{ background: transparent; border: none; border-radius: 6px; color: {p['muted']};
     font-size: 13px; padding: 3px 7px; min-width: 18px; }}

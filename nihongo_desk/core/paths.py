@@ -28,3 +28,8 @@ def user_data_dir() -> Path:
         path = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share")) / APP_NAME
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+def assets_dir() -> Path:
+    """Ilustraciones e iconos (``nihongo_desk/assets``)."""
+    return resources_dir().parent / "assets"

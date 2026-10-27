@@ -9,7 +9,7 @@ from ..widgets import FlowGrid, hbox, label, scroll, vbox
 
 MODULES = [
     ("kana", "あ"), ("kanji", "漢"), ("vocab", "語"), ("grammar", "文"),
-    ("review", "復"), ("stats", "統"), ("settings", "設"),
+    ("review", "復"), ("stats", "統"), ("mascot", "友"), ("settings", "設"),
 ]
 REVIEWABLE = ("kana", "kanji", "vocab", "grammar")
 

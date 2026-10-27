@@ -248,7 +248,9 @@ nihongo_desk/
 │   ├── widgets.py         Toggle, Segmented, ChipGroup, KanaLineEdit, BarChart, FlowGrid…
 │   ├── sounds.py          tonos generados (sin binarios)
 │   ├── main_window.py     ventana sin marco, navegación, bandeja, modo juego, geometría
-│   └── screens/           home, kana_setup, level_setup, session, stats, settings
+│   └── screens/           home, kana_setup, level_setup, session, stats, settings, mascot
+├── mascot/                mascota virtual (ver docs/MASCOT.md); solo recibe eventos de la app
+├── assets/                personajes (manifest + expresiones WebP) e icono daruma
 └── resources/             content.db (contenido), grammar_demo.json
 ```
 

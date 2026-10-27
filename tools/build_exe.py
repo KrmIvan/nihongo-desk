@@ -16,6 +16,8 @@ PyInstaller.__main__.run([
     "--name", "NihongoDesk",
     "--noconfirm", "--windowed",
     "--add-data", f"{ROOT / 'nihongo_desk' / 'resources'}{sep}nihongo_desk/resources",
+    "--add-data", f"{ROOT / 'nihongo_desk' / 'assets'}{sep}nihongo_desk/assets",
+    "--icon", str(ROOT / "nihongo_desk" / "assets" / "icons" / "daruma.ico"),
     "--distpath", str(ROOT / "dist"), "--workpath", str(ROOT / "build"),
     *(["--hidden-import", "pynput.keyboard._xorg"] if sys.platform.startswith("linux") else []),
 ])

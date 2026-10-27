@@ -1,0 +1,9 @@
+{
+  "id": "kurumi",
+  "name": {"ja": "くるみ", "es": "Kurumi", "en": "Kurumi"},
+  "personality": "calm",
+  "accent": "#b98a6e",
+  "bust": [0.08, 0.0, 0.84, 0.31],
+  "expressions": "auto",
+  "credits": "Ilustración original aportada por el usuario. Expresiones y postura en reposo: retoques de esa ilustración hechos con tools/mascot_art.py."
+}

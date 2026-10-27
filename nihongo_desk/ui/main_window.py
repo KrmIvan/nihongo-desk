@@ -9,15 +9,17 @@ from PySide6.QtWidgets import (QApplication, QFrame, QMenu, QSizeGrip, QStackedW
 from ..content.repository import ContentRepo
 from ..core import i18n
 from ..core.i18n import t
-from ..core.paths import resources_dir, user_data_dir
+from ..core.paths import assets_dir, resources_dir, user_data_dir
 from ..core.userdb import UserDB
 from ..exercises.engine import Engine
 from ..exercises.session import Session
+from ..mascot import MascotController
 from ..platform.hotkey import HotkeyManager
 from . import theme
 from .screens.home import HomeScreen
 from .screens.kana_setup import KanaSetupScreen
 from .screens.level_setup import LevelSetupScreen
+from .screens.mascot import MascotScreen
 from .screens.session import SessionScreen, SummaryScreen
 from .screens.settings import SettingsScreen
 from .screens.stats import StatsScreen
@@ -29,6 +31,9 @@ COMPACT_SIZE = (360, 540)
 
 
 def app_icon() -> QIcon:
+    daruma = assets_dir() / "icons" / "daruma.png"
+    if daruma.is_file():
+        return QIcon(str(daruma))
     pm = QPixmap(64, 64)
     pm.fill(Qt.GlobalColor.transparent)
     p = QPainter(pm)
@@ -63,10 +68,9 @@ class TitleBar(QFrame):
 
         self.back = tb("←", t("back"), win.go_home)
         lay.addWidget(self.back)
-        logo = label("日")
-        logo.setObjectName("Logo")
-        logo.setFixedSize(22, 22)
-        logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        logo = label()
+        logo.setFixedSize(24, 24)
+        logo.setPixmap(app_icon().pixmap(24, 24))
         lay.addWidget(logo)
         self.name = label(t("app.title"))
         self.name.setObjectName("AppName")
@@ -145,6 +149,11 @@ class MainWindow(QWidget):
         lay = vbox(root, (1, 1, 1, 1), 0)
         self.title = TitleBar(self)
         lay.addWidget(self.title)
+        self.mascot_strip = QFrame()
+        self.mascot_strip.setObjectName("MascotStrip")
+        self.mascot_strip_lay = vbox(self.mascot_strip, (6, 2, 6, 2), 0)
+        self.mascot_strip.hide()
+        lay.addWidget(self.mascot_strip)
         self.stack = QStackedWidget()
         lay.addWidget(self.stack, 1)
         self.grip = QSizeGrip(self)
@@ -154,6 +163,7 @@ class MainWindow(QWidget):
         self.hotkeys = HotkeyManager()
         self.hotkeys.activated.connect(self.toggle_visible)
         self.hotkeys.register(self.db.get("hotkey"))
+        self.mascot = MascotController(self)
         self._setup_tray()
 
         self.apply_theme()
@@ -195,6 +205,7 @@ class MainWindow(QWidget):
     def go_home(self):
         self.current_session = None
         self._show(HomeScreen(self), ("home",))
+        self.mascot.notify("home")
 
     def open_module(self, key: str):
         if key == "kana":
@@ -207,6 +218,8 @@ class MainWindow(QWidget):
             self._show(StatsScreen(self), ("stats",))
         elif key == "settings":
             self._show(SettingsScreen(self), ("settings",))
+        elif key == "mascot":
+            self._show(MascotScreen(self), ("mascot",))
         if key in ("kana", "kanji", "vocab", "grammar"):
             self.db.set("last_module", key)
 
@@ -222,6 +235,7 @@ class MainWindow(QWidget):
             return
         self.current_session = session
         self.save_session(session)
+        self.mascot.notify("session_start")
         self._show(SessionScreen(self, session), ("session",))
 
     def start_module_session(self, module: str, cfg: dict, n: int, title: str):
@@ -243,6 +257,7 @@ class MainWindow(QWidget):
         if data:
             s = Session.from_json(data)
             self.current_session = s
+            self.mascot.notify("session_start")
             self._show(SessionScreen(self, s), ("session",))
 
     def save_session(self, s: Session):
@@ -254,6 +269,7 @@ class MainWindow(QWidget):
     def finish_session(self, s: Session):
         self.db.set("last_session", None)
         self._show(SummaryScreen(self, s), ("summary",))
+        self.mascot.notify("session_end", accuracy=s.correct / s.answered if s.answered else 0.0)
 
     def again(self, s: Session):
         o = s.origin
@@ -272,7 +288,7 @@ class MainWindow(QWidget):
             pass
         elif kind == "level":
             self.open_module(self.route[1])
-        elif kind in ("kana", "stats", "settings"):
+        elif kind in ("kana", "stats", "settings", "mascot"):
             self.open_module(kind)
         else:
             self.go_home()
@@ -341,6 +357,7 @@ class MainWindow(QWidget):
     def toggle_game_mode(self):
         self.db.set("game_mode", not self.db.get("game_mode"))
         self.apply_game_mode()
+        self.mascot.notify("game_mode")
         if self.route[0] == "settings":
             self.open_module("settings")
 
@@ -397,14 +414,28 @@ class MainWindow(QWidget):
             self.show_window()
 
     def show_window(self):
+        was_visible = self.isVisible()
         self.show()
         self.setWindowState(self.windowState() & ~Qt.WindowState.WindowMinimized)
         self.raise_()
         self.activateWindow()
+        if not was_visible:
+            self.mascot.notify("app_shown")
 
     def hide_window(self):
         self._save_geometry()
         self.hide()
+        self.mascot.notify("app_hidden")
+
+    def notify_mascot(self, event: str, **data):
+        self.mascot.notify(event, **data)
+
+    def apply_mascot_strip(self):
+        """Muestra la mascota integrada (busto) bajo la barra de título si ese es el modo elegido."""
+        on = self.mascot.cfg["mode"] == "integrated" and self.mascot.char is not None
+        if on and self.mascot_strip_lay.count() == 0:
+            self.mascot_strip_lay.addWidget(self.mascot.make_embedded())
+        self.mascot_strip.setVisible(on)
 
     def changeEvent(self, e):
         super().changeEvent(e)
@@ -443,7 +474,13 @@ class MainWindow(QWidget):
         self.act_show.triggered.connect(self.toggle_visible)
         self.act_quit = QAction(menu)
         self.act_quit.triggered.connect(self.quit)
+        self.act_mascot = QAction(menu)
+        self.act_mascot.triggered.connect(self.mascot.toggle_floating)
+        self.act_mascot_input = QAction(menu)
+        self.act_mascot_input.triggered.connect(lambda: (self.mascot.cfg.set("click_through", False), self.mascot.apply()))
         menu.addAction(self.act_show)
+        menu.addAction(self.act_mascot)
+        menu.addAction(self.act_mascot_input)
         menu.addSeparator()
         menu.addAction(self.act_quit)
         self.tray.setContextMenu(menu)
@@ -456,6 +493,8 @@ class MainWindow(QWidget):
         if self.tray:
             self.act_show.setText(t("tray.show"))
             self.act_quit.setText(t("tray.quit"))
+            self.act_mascot.setText(t("tray.mascot"))
+            self.act_mascot_input.setText(t("tray.mascot_input"))
             self.tray.setToolTip(f"Nihongo Desk · {self.db.get('hotkey')}")
 
     def handle_command(self, cmd: str):
@@ -476,6 +515,7 @@ class MainWindow(QWidget):
             return
         self._save_geometry()
         self.hotkeys.unregister()
+        self.mascot.shutdown()
         e.accept()
         QApplication.instance().quit()
 

@@ -372,6 +372,7 @@ class SessionScreen(QWidget):
         self.session.advance(q, ok, elapsed)
         self.app.save_session(self.session)
         self.app.play("ok" if ok else "bad")
+        self.app.notify_mascot("answer", ok=ok)
         if not ok and self.prompt_card is not None:
             shake(self.prompt_card)
         if self.prompt_card is not None and q.reading and (self.app.db.get("furigana") != "never" or q.reading_is_answer):

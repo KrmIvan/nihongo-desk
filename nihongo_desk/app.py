@@ -32,6 +32,7 @@ def main(argv: list[str] | None = None) -> int:
     server.command.connect(win.handle_command)
     if "--hidden" not in argv:
         win.show_window()
+    win.mascot.notify("app_started")
     return app.exec()
 
 
