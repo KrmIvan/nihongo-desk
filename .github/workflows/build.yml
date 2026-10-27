@@ -21,7 +21,7 @@ jobs:
         with: {python-version: "3.12"}
       - run: sudo apt-get update && sudo apt-get install -y libxcb-cursor0 libegl1 libxkbcommon0 libgl1 fonts-noto-cjk
       - run: pip install -r requirements.txt
-      - run: QT_QPA_PLATFORM=offscreen pytest -q
+      - run: QT_QPA_PLATFORM=offscreen python -m pytest -q
 
   windows:
     needs: tests

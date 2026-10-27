@@ -29,3 +29,4 @@ nihongo_desk = ["resources/*", "assets/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
