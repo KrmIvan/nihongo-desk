@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Nihongo Desk
+GenericName=Japanese study
+Comment=Estudia japonés en sesiones cortas / Study Japanese in short sessions
+Exec=NihongoDesk
+Icon=nihongo-desk
+Categories=Education;Languages;
+Keywords=japanese;japonés;kana;kanji;jlpt;
+StartupWMClass=NihongoDesk
+Terminal=false

@@ -1,0 +1,25 @@
+#!/bin/sh
+# Lanzador del AppImage. En la primera ejecución añade Nihongo Desk al menú de
+# aplicaciones del usuario (sin sudo). Desactivar: NIHONGO_NO_DESKTOP_INTEGRATION=1.
+# Quitarlo del menú: ./NihongoDesk.AppImage --remove-desktop
+HERE="$(dirname "$(readlink -f "$0")")"
+DATA="${XDG_DATA_HOME:-$HOME/.local/share}"
+DESKTOP="$DATA/applications/nihongo-desk.desktop"
+ICON="$DATA/icons/hicolor/256x256/apps/nihongo-desk.png"
+
+if [ "$1" = "--remove-desktop" ]; then
+  rm -f "$DESKTOP" "$ICON"
+  exit 0
+fi
+
+if [ -n "$APPIMAGE" ] && [ -z "$NIHONGO_NO_DESKTOP_INTEGRATION" ]; then
+  if ! grep -qs "Exec=\"$APPIMAGE\"" "$DESKTOP"; then
+    mkdir -p "$(dirname "$DESKTOP")" "$(dirname "$ICON")"
+    cp "$HERE/nihongo-desk.png" "$ICON" 2>/dev/null
+    sed -e "s|^Exec=.*|Exec=\"$APPIMAGE\"|" -e "s|^Icon=.*|Icon=$ICON|" \
+        "$HERE/nihongo-desk.desktop" > "$DESKTOP"
+    command -v update-desktop-database >/dev/null && update-desktop-database "$DATA/applications" >/dev/null 2>&1
+  fi
+fi
+
+exec "$HERE/usr/lib-nihongo/NihongoDesk" "$@"

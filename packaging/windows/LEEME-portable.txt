@@ -1,0 +1,25 @@
+Nihongo Desk (versión portable)
+================================
+
+1. Descomprime esta carpeta donde quieras (Escritorio, Documentos, un USB…).
+2. Haz doble clic en NihongoDesk.exe.
+
+No hace falta instalar nada ni permisos de administrador.
+Si Windows muestra «Windows protegió su PC», pulsa «Más información» →
+«Ejecutar de todas formas» (el programa no está firmado digitalmente).
+
+Atajo para mostrar/ocultar la ventana: Ctrl + Shift + J (configurable).
+
+Tus datos (progreso, ajustes y mascota) se guardan en %APPDATA%\NihongoDesk,
+no en esta carpeta: para actualizar, borra esta carpeta y descomprime la
+nueva versión; tu progreso se conserva. Si algo falla al abrir, el error se
+anota en %APPDATA%\NihongoDesk\error.log.
+
+---
+
+Nihongo Desk (portable version)
+
+1. Unzip this folder anywhere. 2. Double-click NihongoDesk.exe.
+No installation or admin rights needed. Your data lives in
+%APPDATA%\NihongoDesk, so replacing this folder with a newer version keeps
+your progress.

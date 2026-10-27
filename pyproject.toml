@@ -1,6 +1,6 @@
 [project]
 name = "nihongo-desk"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Ventana flotante para estudiar japonés en sesiones cortas"
 requires-python = ">=3.10"
 dependencies = [
@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pyinstaller"]
+dev = ["pytest", "pyinstaller>=6.10"]
 
 [project.scripts]
 nihongo-desk = "nihongo_desk.app:main"
@@ -21,8 +21,11 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 include = ["nihongo_desk*"]
 
+[tool.setuptools.dynamic]
+version = {attr = "nihongo_desk.__version__"}
+
 [tool.setuptools.package-data]
-nihongo_desk = ["resources/*"]
+nihongo_desk = ["resources/*", "assets/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -33,6 +33,17 @@ JP_CANDIDATES = ["Yu Gothic UI", "Yu Gothic", "Meiryo", "Noto Sans CJK JP", "Not
 _fonts: dict[str, str] = {}
 
 
+def load_bundled_fonts() -> None:
+    """Registra las fuentes de ``assets/fonts`` (el AppImage incluye Noto Sans JP) antes de elegir familia."""
+    from ..core.paths import assets_dir
+    folder = assets_dir() / "fonts"
+    if folder.is_dir():
+        for f in sorted(folder.iterdir()):
+            if f.suffix.lower() in (".ttf", ".otf", ".ttc"):
+                QFontDatabase.addApplicationFont(str(f))
+        _fonts.clear()
+
+
 def _first_available(cands: list[str]) -> str:
     fams = set(QFontDatabase.families())
     return next((c for c in cands if c in fams), "")

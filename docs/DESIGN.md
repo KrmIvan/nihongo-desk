@@ -315,4 +315,4 @@ El diseño, las funciones y el formato de datos son idénticos en todas las plat
 - **Gramática:** revisión nativa del contenido demo y más contenido N4–N1.
 - **Traducciones de las frases de ejemplo al español:** Tatoeba tiene pares jpn–spa, pero hay que enlazarlos por ID de frase.
 - **IA opcional:** explicar un error o generar ejemplos. Encaja como un proveedor más que añade texto a `Question.explanation`, desactivado por defecto.
-- **Pruebas en Windows 10:** atajo global, bandeja, siempre visible y empaquetado con `tools/build_exe.py`. El desarrollo se hizo en Linux (X11).
+- **Pruebas en Windows 10:** atajo global, bandeja, siempre visible en un equipo real. El empaquetado se prueba automáticamente en GitHub Actions (ver README → «Generar los instaladores»).
