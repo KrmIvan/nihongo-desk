@@ -7,3 +7,4 @@ dist/
 *.spec
 data/raw/
 *.egg-info/
+!packaging/nihongo_desk.spec

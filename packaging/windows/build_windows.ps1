@@ -17,7 +17,8 @@ New-Item -ItemType Directory -Force $Build, $Dist | Out-Null
 # --- Python y dependencias en un entorno propio de compilación
 $Py = "$Build\venv\Scripts\python.exe"
 if (-not (Test-Path $Py)) {
-    $base = if (Get-Command py -ErrorAction SilentlyContinue) { "py" } else { "python" }
+    # $env:PYTHON permite elegir intérprete; si no, el «python» del PATH y, en su defecto, el lanzador «py»
+    $base = if ($env:PYTHON) { $env:PYTHON } elseif (Get-Command python -ErrorAction SilentlyContinue) { "python" } else { "py" }
     & $base -m venv "$Build\venv"
 }
 & $Py -m pip install -q --upgrade pip
